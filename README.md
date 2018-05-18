@@ -54,7 +54,7 @@ Now UDPping will generate outputs as a normal ping, but the protocol used is `UD
 
 # Advanced Usage
 ```
-root@raspberrypi:~# ./udpping.py 10.222.2.1 4000 xx yy
+root@raspberrypi:~# ./udpping.py
  usage:
    this_program <dest_ip> <dest_port>
    this_program <dest_ip> <dest_port> "<options>"
