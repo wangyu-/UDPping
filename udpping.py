@@ -89,7 +89,7 @@ while True:
 			recv_data,addr = sock.recvfrom(65536)
 			if recv_data== payload.encode()  and addr[0]==IP and addr[1]==PORT:
 				rtt=((time.time()-time_of_send)*1000)
-				print("Reply from",IP,"seq=%d"%count, "time=%.3f"%(rtt),"ms")
+				print("Reply from",IP,"seq=%d"%count, "time=%.2f"%(rtt),"ms")
 				received=1
 				break
 		except socket.timeout:
