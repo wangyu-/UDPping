@@ -62,6 +62,9 @@ if len(sys.argv)==4:
 if LEN<5:
 	print("LEN must be >=5")
 	exit()
+if INTERVAL<50:
+	print("INTERVAL must be >=50")
+	exit()
 
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -79,7 +82,6 @@ while True:
 	while True:
 		timeout=deadline - time.time()
 		if timeout <0:
-			print("Request timed out")
 			break
 		#print "timeout=",timeout
 		sock.settimeout(timeout);
@@ -90,15 +92,18 @@ while True:
 				print("Reply from",IP,"seq=%d"%count, "time=%.3f"%(rtt),"ms")
 				received=1
 				break
-		except:
-			print("Request timed out")
+		except socket.timeout:
 			break
+		except :
+			pass
 	count+=	1
 	if received==1:
 		count_of_received+=1
 		rtt_sum+=rtt
 		rtt_max=max(rtt_max,rtt)
 		rtt_min=min(rtt_min,rtt)
+	else:
+		print("Request timed out")
 
 	time_remaining=deadline-time.time()
 	if(time_remaining>0):
