@@ -49,12 +49,18 @@ if len(sys.argv) != 3 and len(sys.argv)!=4 :
 	print(" examples:")
 	print("   ./udpping 44.55.66.77 4000")
 	print('   ./udpping 44.55.66.77 4000 "LEN=400;INTERVAL=2000"')
+	print("   ./udpping fe80::5400:ff:aabb:ccdd 4000")
 	print()
 
 	exit()
 
 IP=sys.argv[1]
 PORT=int(sys.argv[2])
+
+is_ipv6=0;
+
+if IP.find(":")!=-1:
+	is_ipv6=1;
 
 if len(sys.argv)==4:
 	exec(sys.argv[3])
@@ -68,7 +74,11 @@ if INTERVAL<50:
 
 signal.signal(signal.SIGINT, signal_handler)
 
-sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+if not is_ipv6:
+	sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+else:
+	sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
+
 print("UDPping %s via port %d with %d bytes of payload"% (IP,PORT,LEN))
 
 while True:
