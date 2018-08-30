@@ -57,7 +57,7 @@ Now UDPping will generate outputs as a normal ping, but the protocol used is `UD
 root@raspberrypi:~# ./udpping.py
  usage:
    this_program <dest_ip> <dest_port>
-   this_program <dest_ip> <dest_port> "<options>"
+   this_program <dest_ip> <dest_port> "<options>" 
 
  options:
    LEN         the length of payload, unit:byte
@@ -66,5 +66,6 @@ root@raspberrypi:~# ./udpping.py
  examples:
    ./udpping 44.55.66.77 4000
    ./udpping 44.55.66.77 4000 "LEN=400;INTERVAL=2000"
+   ./udpping fe80::5400:ff:aabb:ccdd 4000
    
 ```
