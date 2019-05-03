@@ -64,8 +64,8 @@ root@raspberrypi:~# ./udpping.py
    INTERVAL    the seconds waited between sending each packet, as well as the timeout for reply packet, unit: ms
 
  examples:
-   ./udpping 44.55.66.77 4000
-   ./udpping 44.55.66.77 4000 "LEN=400;INTERVAL=2000"
-   ./udpping fe80::5400:ff:aabb:ccdd 4000
+   ./udpping.py 44.55.66.77 4000
+   ./udpping.py 44.55.66.77 4000 "LEN=400;INTERVAL=2000"
+   ./udpping.py fe80::5400:ff:aabb:ccdd 4000
    
 ```

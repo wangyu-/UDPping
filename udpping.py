@@ -47,9 +47,9 @@ if len(sys.argv) != 3 and len(sys.argv)!=4 :
 
 	print()
 	print(" examples:")
-	print("   ./udpping 44.55.66.77 4000")
-	print('   ./udpping 44.55.66.77 4000 "LEN=400;INTERVAL=2000"')
-	print("   ./udpping fe80::5400:ff:aabb:ccdd 4000")
+	print("   ./udpping.py 44.55.66.77 4000")
+	print('   ./udpping.py 44.55.66.77 4000 "LEN=400;INTERVAL=2000"')
+	print("   ./udpping.py fe80::5400:ff:aabb:ccdd 4000")
 	print()
 
 	exit()
@@ -80,6 +80,7 @@ else:
 	sock = socket.socket(socket.AF_INET6,socket.SOCK_DGRAM)
 
 print("UDPping %s via port %d with %d bytes of payload"% (IP,PORT,LEN))
+sys.stdout.flush()
 
 while True:
 	payload= random_string(LEN)
@@ -100,6 +101,7 @@ while True:
 			if recv_data== payload.encode()  and addr[0]==IP and addr[1]==PORT:
 				rtt=((time.time()-time_of_send)*1000)
 				print("Reply from",IP,"seq=%d"%count, "time=%.2f"%(rtt),"ms")
+				sys.stdout.flush()
 				received=1
 				break
 		except socket.timeout:
@@ -114,6 +116,7 @@ while True:
 		rtt_min=min(rtt_min,rtt)
 	else:
 		print("Request timed out")
+		sys.stdout.flush()
 
 	time_remaining=deadline-time.time()
 	if(time_remaining>0):
