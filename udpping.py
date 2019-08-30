@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function 
+from __future__ import print_function
 
 import socket
 import sys
@@ -54,7 +54,7 @@ if len(sys.argv) != 3 and len(sys.argv)!=4 :
 
 	exit()
 
-IP=sys.argv[1]
+IP=socket.gethostbyname(sys.argv[1])
 PORT=int(sys.argv[2])
 
 is_ipv6=0;
@@ -64,7 +64,7 @@ if IP.find(":")!=-1:
 
 if len(sys.argv)==4:
 	exec(sys.argv[3])
-	
+
 if LEN<5:
 	print("LEN must be >=5")
 	exit()
@@ -89,7 +89,7 @@ while True:
 	deadline = time.time() + INTERVAL/1000.0
 	received=0
 	rtt=0.0
-	
+
 	while True:
 		timeout=deadline - time.time()
 		if timeout <0:
