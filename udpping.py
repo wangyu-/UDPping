@@ -10,9 +10,8 @@ import random
 import signal
 import sys
 import os
+import argparse
 
-INTERVAL = 1000  #unit ms
-LEN =64
 IP=""
 PORT=0
 
@@ -35,35 +34,30 @@ def signal_handler(signal, frame):
 def random_string(length):
         return ''.join(random.choice(string.ascii_letters+ string.digits ) for m in range(length))
 
-if len(sys.argv) != 3 and len(sys.argv)!=4 :
-	print(""" usage:""")
-	print("""   this_program <dest_ip> <dest_port>""")
-	print("""   this_program <dest_ip> <dest_port> "<options>" """)
+parser = argparse.ArgumentParser(
+	description='ping with UDP protocol',
+	)
+parser.add_argument('--dip', required=True, help='destination ip')
+parser.add_argument('--dport', required=True, type=int, help='destination port')
+parser.add_argument('-l', '--len', type=int, help='the length of payload, unit:byte')
+parser.add_argument(
+		'-i', '--interval', type=int,
+		help='the seconds waited between sending each packet, \
+			as well as the timeout for reply packet, unit: ms'
+	)
 
-	print()
-	print(""" options:""")
-	print("""   LEN         the length of payload, unit:byte""")
-	print("""   INTERVAL    the seconds waited between sending each packet, as well as the timeout for reply packet, unit: ms""")
+args = parser.parse_args()
 
-	print()
-	print(" examples:")
-	print("   ./udpping.py 44.55.66.77 4000")
-	print('   ./udpping.py 44.55.66.77 4000 "LEN=400;INTERVAL=2000"')
-	print("   ./udpping.py fe80::5400:ff:aabb:ccdd 4000")
-	print()
+IP = args.dip
+PORT = args.dport
 
-	exit()
-
-IP=sys.argv[1]
-PORT=int(sys.argv[2])
-
-is_ipv6=0;
+is_ipv6=0
 
 if IP.find(":")!=-1:
-	is_ipv6=1;
+	is_ipv6=1
 
-if len(sys.argv)==4:
-	exec(sys.argv[3])
+LEN = args.len if args.len else 64 # unit byte
+INTERVAL = args.interval if args.interval else 1000 # unit ms
 	
 if LEN<5:
 	print("LEN must be >=5")
@@ -121,4 +115,3 @@ while True:
 	time_remaining=deadline-time.time()
 	if(time_remaining>0):
 		time.sleep(time_remaining)
-
