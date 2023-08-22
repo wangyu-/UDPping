@@ -62,10 +62,11 @@ root@raspberrypi:~# ./udpping.py
  options:
    LEN         the length of payload, unit:byte
    INTERVAL    the seconds waited between sending each packet, as well as the timeout for reply packet, unit: ms
+   COUNT       the count of packets, default is unlimited
 
  examples:
    ./udpping.py 44.55.66.77 4000
-   ./udpping.py 44.55.66.77 4000 "LEN=400;INTERVAL=2000"
+   ./udpping.py 44.55.66.77 4000 "LEN=400;INTERVAL=2000;COUNT=100"
    ./udpping.py fe80::5400:ff:aabb:ccdd 4000
    
 ```

@@ -16,6 +16,9 @@ LEN =64
 IP=""
 PORT=0
 
+COUNT = 0
+HAS_COUNT = False
+
 count=0
 count_of_received=0
 rtt_sum=0.0
@@ -32,8 +35,18 @@ def signal_handler(signal, frame):
 		print('rtt min/avg/max = %.2f/%.2f/%.2f ms'%(rtt_min,rtt_sum/count_of_received,rtt_max))
 	os._exit(0)
 
+def print_result():
+	if count!=0 and count_of_received!=0:
+		print('')
+		print('--- ping statistics ---')
+	if count!=0:
+		print('%d packets transmitted, %d received, %.2f%% packet loss'%(count,count_of_received, (count-count_of_received)*100.0/count))
+	if count_of_received!=0:
+		print('rtt min/avg/max = %.2f/%.2f/%.2f ms'%(rtt_min,rtt_sum/count_of_received,rtt_max))
+	os._exit(0)
+
 def random_string(length):
-        return ''.join(random.choice(string.ascii_letters+ string.digits ) for m in range(length))
+	return ''.join(random.choice(string.ascii_letters+ string.digits ) for m in range(length))
 
 if len(sys.argv) != 3 and len(sys.argv)!=4 :
 	print(""" usage:""")
@@ -44,12 +57,14 @@ if len(sys.argv) != 3 and len(sys.argv)!=4 :
 	print(""" options:""")
 	print("""   LEN         the length of payload, unit:byte""")
 	print("""   INTERVAL    the seconds waited between sending each packet, as well as the timeout for reply packet, unit: ms""")
+	print("""   COUNT       the count of packet, default is unlimited""")
 
 	print()
 	print(" examples:")
 	print("   ./udpping.py 44.55.66.77 4000")
 	print('   ./udpping.py 44.55.66.77 4000 "LEN=400;INTERVAL=2000"')
 	print("   ./udpping.py fe80::5400:ff:aabb:ccdd 4000")
+	print('   ./udpping.py 44.55.66.77 4000 "LEN=400;INTERVAL=2000;COUNT=100"')
 	print()
 
 	exit()
@@ -57,10 +72,10 @@ if len(sys.argv) != 3 and len(sys.argv)!=4 :
 IP=sys.argv[1]
 PORT=int(sys.argv[2])
 
-is_ipv6=0;
+is_ipv6=0
 
 if IP.find(":")!=-1:
-	is_ipv6=1;
+	is_ipv6=1
 
 if len(sys.argv)==4:
 	exec(sys.argv[3])
@@ -71,6 +86,9 @@ if LEN<5:
 if INTERVAL<50:
 	print("INTERVAL must be >=50")
 	exit()
+
+if COUNT != 0:
+	HAS_COUNT = True
 
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -83,22 +101,28 @@ print("UDPping %s via port %d with %d bytes of payload"% (IP,PORT,LEN))
 sys.stdout.flush()
 
 while True:
+
+	if (HAS_COUNT and COUNT == count):
+		print_result()
+
 	payload= random_string(LEN)
 	sock.sendto(payload.encode(), (IP, PORT))
 	time_of_send=time.time()
 	deadline = time.time() + INTERVAL/1000.0
 	received=0
 	rtt=0.0
-	
+
 	while True:
 		timeout=deadline - time.time()
 		if timeout <0:
 			break
 		#print "timeout=",timeout
-		sock.settimeout(timeout);
+		sock.settimeout(timeout)
 		try:
 			recv_data,addr = sock.recvfrom(65536)
-			if recv_data== payload.encode()  and addr[0]==IP and addr[1]==PORT:
+			if recv_data== payload.encode()  and  \
+					(addr[0]==IP or (is_ipv6 and (socket.inet_pton(socket.AF_INET6, addr[0]) == socket.inet_pton(socket.AF_INET6, IP)))) and \
+					addr[1]==PORT:
 				rtt=((time.time()-time_of_send)*1000)
 				print("Reply from",IP,"seq=%d"%count, "time=%.2f"%(rtt),"ms")
 				sys.stdout.flush()
