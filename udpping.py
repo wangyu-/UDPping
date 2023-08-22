@@ -120,7 +120,9 @@ while True:
 		sock.settimeout(timeout)
 		try:
 			recv_data,addr = sock.recvfrom(65536)
-			if recv_data== payload.encode()  and addr[0]==IP and addr[1]==PORT:
+			if recv_data== payload.encode()  and  \
+					(addr[0]==IP or (is_ipv6 and (socket.inet_pton(socket.AF_INET6, addr[0]) == socket.inet_pton(socket.AF_INET6, IP)))) and \
+					addr[1]==PORT:
 				rtt=((time.time()-time_of_send)*1000)
 				print("Reply from",IP,"seq=%d"%count, "time=%.2f"%(rtt),"ms")
 				sys.stdout.flush()
